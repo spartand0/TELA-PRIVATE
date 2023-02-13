@@ -1,0 +1,41 @@
+{
+  "name": "tela-backend",
+  "version": "1.0.0",
+  "description": "a high performance backend for tela App.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spartand0/Tela-backend.git"
+  },
+  "keywords": [
+    "Tela",
+    "service",
+    "b2c",
+    "providers",
+    "clients"
+  ],
+  "author": "Sami Sghaier (spartando)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/spartand0/Tela-backend/issues"
+  },
+  "homepage": "https://github.com/spartand0/Tela-backend#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^6.8.2",
+    "morgan": "^1.10.0",
+    "objection": "^3.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
