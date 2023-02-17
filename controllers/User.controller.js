@@ -785,7 +785,11 @@ exports.searchProviders = async (req, res) => {
             coordinates: [parseFloat(longitude), parseFloat(latitude)],
           },
           distanceField: "dist.calculated",
-          query: { "providerInfo.Category": category, isProvider: true },
+          query: {
+            "providerInfo.available": true,
+            "providerInfo.Category": category,
+            isProvider: true,
+          },
           spherical: true,
         },
       },
@@ -1273,6 +1277,45 @@ exports.declineProvider = async (req, res) => {
     res.status(500).send({
       message:
         "This error is coming from declineProvider endpoint, please report to the sys administrator !",
+      code: 500,
+      success: false,
+      date: Date.now(),
+    });
+  }
+};
+
+exports.activatePro = async (req, res) => {
+  try {
+    const token = req["cookies"]["x-tela-token"];
+    const user = jwt.verify(token, process.env.SECRET_KEY);
+    const foundUser = await UserModel.findOne({ id: user.id });
+    if (!foundUser) {
+      return res.status(404).send({
+        message: "User not found",
+        code: 404,
+        success: false,
+        date: Date.now(),
+      });
+    } else if (foundUser.isProvider) {
+      return res.status(400).send({
+        message: "User already has a pro account",
+        code: 400,
+        success: false,
+        date: Date.now(),
+      });
+    }
+    foundUser.isProvider = true;
+    await foundUser.save();
+    return res.status(200).send({
+      message: "Successfully activated your pro account",
+      code: 200,
+      success: true,
+      date: Date.now(),
+    });
+  } catch (error) {
+    res.status(500).send({
+      message:
+        "This error is coming from activatePro endpoint, please report to the sys administrator !",
       code: 500,
       success: false,
       date: Date.now(),

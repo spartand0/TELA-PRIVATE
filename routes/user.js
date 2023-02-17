@@ -27,6 +27,7 @@ const {
   getCategories,
   getSubCategory,
   getSubCategories,
+  activatePro,
 } = require("../controllers/User.controller");
 const { isUser } = require("../middlewares/User/isUser");
 const { isProvider } = require("../middlewares/User/isProvider");
@@ -67,6 +68,7 @@ User.get("/getRequests", use(isUser), use(getRequests));
 User.get("/viewProfile", use(isUser), use(viewProfile));
 User.get("/getFavProviders", use(isUser), use(getFavProviders));
 //PUT
+User.put("/activatePro", use(isUser), use(activatePro));
 User.put("/editProfile/:id", use(isUser), use(editProfile));
 User.put("/editProvider/:id", use(isUser), use(editProvider));
 User.put("/approveTransaction/:id", use(isProvider), use(approveTransaction));

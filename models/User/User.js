@@ -18,7 +18,7 @@ const Provider = new Schema({
   photoWork: { type: Array, Default: "" },
   license: { type: String, Default: "" },
   activityRadius: { type: Number, Default: 0 },
-  available: { type: Boolean, Default: false },
+  available: { type: Boolean, Default: true },
   Languages: { type: Array, Default: "" },
   transactions: { type: Array, Default: [] },
   reviews: { type: [feedBack], Default: [] },

@@ -206,7 +206,7 @@ exports.createSubCategory = async (req, res) => {
     });
     if (!foundCategory) {
       return res.status(400).send({
-        message: "cannot find category , please verify and try again",
+        message: "Cannot find category , please verify and try again",
         code: 400,
         success: false,
         date: Date.now(),
@@ -235,6 +235,223 @@ exports.createSubCategory = async (req, res) => {
     res.status(500).send({
       message:
         "This error is coming from createSubCategory endpoint, please report to the sys administrator !",
+      code: 500,
+      success: false,
+      date: Date.now(),
+    });
+  }
+};
+
+exports.getCategories = async (req, res) => {
+  try {
+    const foundCategories = await CategoryModel.find();
+    return res.status(200).send({
+      message: "Fetched all categories",
+      code: 200,
+      success: true,
+      date: Date.now(),
+      categories: foundCategories,
+    });
+  } catch (error) {
+    res.status(500).send({
+      message:
+        "This error is coming from getCategories endpoint, please report to the sys administrator !",
+      code: 500,
+      success: false,
+      date: Date.now(),
+    });
+  }
+};
+
+exports.getSubCategories = async (req, res) => {
+  try {
+    const foundCategories = await CategoryModel.find();
+    let subCategories = [];
+    foundCategories.map((catg) => {
+      subCategories.push(catg.subCategories);
+    });
+
+    return res.status(200).send({
+      message: "Fetched all sub categories",
+      code: 200,
+      success: true,
+      date: Date.now(),
+      subCategories,
+    });
+  } catch (error) {
+    res.status(500).send({
+      message:
+        "This error is coming from getSubCategories endpoint, please report to the sys administrator !",
+      code: 500,
+      success: false,
+      date: Date.now(),
+    });
+  }
+};
+
+exports.getCategory = async (req, res) => {
+  try {
+    const idCategory = req.params["id"];
+    const foundCategory = await CategoryModel.findOne({ idCategory });
+    if (!foundCategory) {
+      return res.status(404).send({
+        message: "Category not found",
+        code: 404,
+        success: false,
+        date: Date.now(),
+        categories: foundCategory,
+      });
+    }
+    return res.status(200).send({
+      message: "Fetched category",
+      code: 200,
+      success: true,
+      date: Date.now(),
+      category: foundCategory,
+    });
+  } catch (error) {
+    res.status(500).send({
+      message:
+        "This error is coming from getCategory endpoint, please report to the sys administrator !",
+      code: 500,
+      success: false,
+      date: Date.now(),
+    });
+  }
+};
+
+exports.getSubCategory = async (req, res) => {
+  try {
+    const idCategory = req.params["id"];
+    const { idSubCat } = req.body;
+    const foundCategory = await CategoryModel.findOne({ idCategory });
+    let foundSubCategory;
+    foundCategory.subCategories.map((catg) => {
+      if (catg.idSubCat === idSubCat) {
+        foundSubCategory = catg;
+        return;
+      }
+    });
+
+    return res.status(200).send({
+      message: "Fetched sub category",
+      code: 200,
+      success: true,
+      date: Date.now(),
+      subCategory: foundSubCategory,
+    });
+  } catch (error) {
+    res.status(500).send({
+      message:
+        "This error is coming from getSubCategory endpoint, please report to the sys administrator !",
+      code: 500,
+      success: false,
+      date: Date.now(),
+    });
+  }
+};
+
+exports.editCategory = async (req, res) => {
+  try {
+    const idCategory = req.params["id"];
+    const { categoryName, image, isActive } = req.body;
+    await CategoryModel.findOneAndUpdate(
+      { idCategory },
+      { categoryName, image, isActive }
+    );
+    res.status(200).send({
+      code: 200,
+      message: "Updated category",
+      success: true,
+      date: Date.now(),
+    });
+  } catch (error) {
+    res.status(500).send({
+      message:
+        "This error is coming from editCategory endpoint, please report to the sys administrator !",
+      code: 500,
+      success: false,
+      date: Date.now(),
+    });
+  }
+};
+
+exports.editSubCategory = async (req, res) => {
+  try {
+    const idCategory = req.params["id"];
+    const { idSubCat, subCatName, image, isActive } = req.body;
+    const foundCategory = await CategoryModel.findOne({ idCategory });
+    foundCategory.subCategories.map((catg) => {
+      if (catg.idSubCat === idSubCat) {
+        catg.subCatName = subCatName;
+        catg.image = image;
+        catg.isActive = isActive;
+        return;
+      }
+    });
+    await foundCategory.save();
+    res.status(200).send({
+      code: 200,
+      message: "Updated sub category",
+      success: true,
+      date: Date.now(),
+    });
+  } catch (error) {
+    res.status(500).send({
+      message:
+        "This error is coming from editSubCategory endpoint, please report to the sys administrator !",
+      code: 500,
+      success: false,
+      date: Date.now(),
+    });
+  }
+};
+
+exports.archiveCategory = async (req, res) => {
+  try {
+    const idCategory = req.params["id"];
+    const foundCategory = await CategoryModel.findOne({ idCategory });
+    foundCategory.isArchived = !foundCategory.isArchived;
+    await foundCategory.save();
+    res.status(200).send({
+      code: 200,
+      message: "Archived category",
+      success: true,
+      date: Date.now(),
+    });
+  } catch (error) {
+    res.status(500).send({
+      message:
+        "This error is coming from archiveCategory endpoint, please report to the sys administrator !",
+      code: 500,
+      success: false,
+      date: Date.now(),
+    });
+  }
+};
+
+exports.archiveSubCategory = async (req, res) => {
+  try {
+    const idCategory = req.params["id"];
+    const { idSubCat } = req.body;
+    const foundCategory = await CategoryModel.findOne({ idCategory });
+    foundCategory.subCategories.map((catg) => {
+      if (catg.idSubCat === idSubCat) {
+        catg.isArchived = !catg.isArchived;
+        return;
+      }
+    });
+    await foundCategory.save();
+    res.status(200).send({
+      code: 200,
+      message: "Archived sub category",
+      success: true,
+      date: Date.now(),
+    });
+  } catch (error) {
+    res.status(500).send({
+      message:
+        "This error is coming from archiveSubCategory endpoint, please report to the sys administrator !",
       code: 500,
       success: false,
       date: Date.now(),
