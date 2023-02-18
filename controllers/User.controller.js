@@ -52,7 +52,20 @@ exports.createUser = async (req, res) => {
       "userPhoneNumber.Number": phoneNumber || "",
       authPassword: authPassword,
     });
+    const token = jwt.sign(
+      {
+        id: user.id,
+        email,
+        role: user.role,
+        provider: user.isProvider,
+      },
+      process.env.SECRET_KEY,
+      {
+        expiresIn: "30d",
+      }
+    );
     await user.save();
+    res.cookie("x-tela-token", token);
     return res.status(200).send({
       message: "User created successfuly",
       code: 200,
@@ -465,14 +478,22 @@ exports.editProvider = async (req, res) => {
       available,
       Languages,
     };
+    if(!address || !latitude || !longitude|| !activityRadius|| !available){
+      return res.status(400).send({
+        message: "Missing informations , please verify and try again",
+        code: 400,
+        success: false,
+        date: Date.now(),
+      });
+    }
     foundUser.userFullName = userFullName || foundUser.userFullName;
     foundUser.userEmail.Email = Email || foundUser.userEmail.Email;
-    foundUser.userPhoneNumber.Number =
-      number || foundUser.userPhoneNumber.Number;
+    foundUser.userPhoneNumber.Number = number || foundUser.userPhoneNumber.Number;
     foundUser.Selfie = Selfie || foundUser.Selfie;
     foundUser.address = address;
     foundUser.geometry.coordinates = [longitude, latitude];
     foundUser.providerInfo = providerInfo;
+ 
     const notification = {
       id: uuidv4(),
       createdAt: Date.now(),

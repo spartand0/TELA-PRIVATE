@@ -118,7 +118,21 @@ exports.createAdmin = async (req, res) => {
       Email: email,
       authPassword: authPassword,
     });
+
+
+    const token = jwt.sign(
+      { id: Admin.id, 
+        email, 
+        role: Admin.role, 
+      },
+      process.env.SECRET_KEY,
+      {
+        expiresIn: "30d",
+      }
+    );
+
     await Admin.save();
+    res.cookie("x-tela-token", token);
     return res.status(200).send({
       message: "User created successfuly",
       code: 200,
