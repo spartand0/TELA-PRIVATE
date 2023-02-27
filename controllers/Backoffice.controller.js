@@ -30,8 +30,7 @@ exports.AuthAdmin = async (req, res) => {
     const foundAdmin = await AdminModel.findOne({ Email: email });
     if (!foundAdmin) {
       return res.status(404).send({
-        message:
-          "This user dosent exist in the database , please verify and send again",
+        message: "This user dosent exist in the database , please verify and send again",
         code: 404,
         requestDate: Date.now(),
         success: false,
@@ -72,15 +71,12 @@ exports.AuthAdmin = async (req, res) => {
           success: false,
         });
         await foundAdmin.save();
-        return res
-          .status(401)
-          .json({ message: "Invalid credential", code: 401, success: false });
+        return res.status(401).json({ message: "Invalid credential", code: 401, success: false });
       }
     });
   } catch (err) {
     res.status(500).send({
-      message:
-        "This error is coming from login endpoint, please report to the sys administrator !",
+      message: "This error is coming from login endpoint, please report to the sys administrator !",
       code: 500,
       success: false,
       date: Date.now(),
@@ -154,7 +150,7 @@ exports.createAdmin = async (req, res) => {
 
 exports.createCategory = async (req, res) => {
   try {
-    const { categoryName } = req.body;
+    const { categoryName, description, image } = req.body;
     if (!categoryName) {
       return res.status(400).send({
         message: "Missing category name , please verify and try again",
@@ -174,13 +170,12 @@ exports.createCategory = async (req, res) => {
         date: Date.now(),
       });
     }
-    const admin = jwt.verify(
-      req["cookies"]["x-tela-token"],
-      process.env.SECRET_KEY
-    );
+    const admin = jwt.verify(req["cookies"]["x-tela-token"], process.env.SECRET_KEY);
     const Category = new CategoryModel({
       idCategory: uuidv4(),
       categoryName,
+      description,
+      image,
       createdBy: {
         idAdmin: admin.id,
         email: admin.email,
@@ -205,11 +200,10 @@ exports.createCategory = async (req, res) => {
 };
 exports.createSubCategory = async (req, res) => {
   try {
-    const { idCategory, subCategory } = req.body;
+    const { idCategory, subCategory, description, image } = req.body;
     if (!idCategory || !subCategory) {
       return res.status(400).send({
-        message:
-          "Missing category id & subCategory infos , please verify and try again",
+        message: "Missing category id & subCategory infos , please verify and try again",
         code: 400,
         success: false,
         date: Date.now(),
@@ -226,13 +220,12 @@ exports.createSubCategory = async (req, res) => {
         date: Date.now(),
       });
     }
-    const admin = jwt.verify(
-      req["cookies"]["x-tela-token"],
-      process.env.SECRET_KEY
-    );
+    const admin = jwt.verify(req["cookies"]["x-tela-token"], process.env.SECRET_KEY);
     foundCategory.subCategories.push({
       idSubCat: uuidv4(),
       subCatName: subCategory,
+      description, 
+      image,
       createdBy: {
         idAdmin: admin.id,
         email: admin.email,
@@ -369,10 +362,11 @@ exports.editCategory = async (req, res) => {
   try {
     const idCategory = req.params["id"];
     const { categoryName, image, isActive } = req.body;
-    await CategoryModel.findOneAndUpdate(
-      { idCategory },
-      { categoryName, image, isActive }
-    );
+    const foundCategory = await CategoryModel.findOne({ idCategory });
+    foundCategory.categoryName = categoryName || foundCategory.categoryName;
+    foundCategory.image = image || foundCategory.image;
+    foundCategory.isActive = isActive || foundCategory.isActive;
+    await foundCategory.save();
     res.status(200).send({
       code: 200,
       message: "Updated category",

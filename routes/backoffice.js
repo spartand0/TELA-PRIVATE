@@ -18,7 +18,7 @@ const use = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
 
 Backoffice.post("/AuthAdmin", use(AuthAdmin));
-Backoffice.post("/createAdmin", use(createAdmin));
+Backoffice.post("/createAdmin", use(isAdmin), use(createAdmin));
 
 Backoffice.post("/createCategory", use(isAdmin), use(createCategory));
 Backoffice.post("/createSubCategory", use(isAdmin), use(createSubCategory));

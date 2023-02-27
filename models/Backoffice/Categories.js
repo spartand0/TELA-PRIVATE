@@ -3,6 +3,7 @@ const { Schema } = mongoose;
 const subCategory = new Schema({
   idSubCat: { type: String, require: true },
   subCatName: { type: String, require: true },
+  description: { type: String, require: false, default: "" },
   creationDate: { type: String, default: new Date() },
   createdBy: {
     idAdmin: { type: String },
@@ -10,11 +11,13 @@ const subCategory = new Schema({
   },
   isArchived: { type: Boolean, default: false },
   isActive: { type: Boolean, default: true },
-  image: { type: String,default:'' }
+  image: { type: String, default: "" },
 });
 const Category = new Schema({
   idCategory: { type: String, require: true },
   categoryName: { type: String, require: true },
+  description: { type: String, require: false, default: "" },
+
   subCategories: { type: [subCategory], default: [] },
   creationDate: { type: String, default: new Date() },
   createdBy: {
@@ -23,7 +26,7 @@ const Category = new Schema({
   },
   isArchived: { type: Boolean, default: false },
   isActive: { type: Boolean, default: true },
-  image: { type: String ,default:''},
+  image: { type: String, default: "" },
 });
 
 const CategoryModel = mongoose.model("Category", Category);
