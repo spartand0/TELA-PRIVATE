@@ -27,8 +27,8 @@ const {
   getCategories,
   getSubCategory,
   getSubCategories,
-  activatePro,
-} = require("../controllers/User.controller");
+  activatePro, 
+}= require("../controllers/User.controller");
 const { isUser } = require("../middlewares/User/isUser");
 const { isProvider } = require("../middlewares/User/isProvider");
 
