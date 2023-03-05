@@ -464,6 +464,7 @@ exports.editProvider = async (req, res) => {
       number,
       Selfie,
       license,
+      Status,
     } = req.body;
     const providerInfo = {
       license,
@@ -486,6 +487,7 @@ exports.editProvider = async (req, res) => {
         date: Date.now(),
       });
     }
+    foundUser.Status = Status || foundUser.Status;
     foundUser.userFullName = userFullName || foundUser.userFullName;
     foundUser.userEmail.Email = Email || foundUser.userEmail.Email;
     foundUser.userPhoneNumber.Number = number || foundUser.userPhoneNumber.Number;
@@ -764,7 +766,7 @@ exports.viewProfile = async (req, res) => {
     const token = req["cookies"]["x-tela-token"];
     const user = jwt.verify(token, process.env.SECRET_KEY);
     const foundUser = await UserModel.findOne({ id: user.id }).select(
-      "userFullName isProvider providerInfo userPhoneNumber Selfie address geomtry favProviders"
+      "userFullName isProvider providerInfo userPhoneNumber Selfie address geomtry favProviders id Status"
     );
     if (!foundUser) {
       return res.status(404).send({
