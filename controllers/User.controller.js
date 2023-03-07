@@ -766,7 +766,7 @@ exports.viewProfile = async (req, res) => {
     const token = req["cookies"]["x-tela-token"];
     const user = jwt.verify(token, process.env.SECRET_KEY);
     const foundUser = await UserModel.findOne({ id: user.id }).select(
-      "userFullName isProvider providerInfo userPhoneNumber Selfie address geomtry favProviders id Status"
+      "userFullName isProvider providerInfo userPhoneNumber Selfie address geomtry favProviders id Status userEmail"
     );
     if (!foundUser) {
       return res.status(404).send({
